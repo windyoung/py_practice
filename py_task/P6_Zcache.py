@@ -1,15 +1,16 @@
 # -*- coding:utf-8 -*-
 
 '''
-@Author: Zhu Jian
+@Author: windyoung
 @Date: 2020-05-20 16:43:05
-@LastEditTime: 2020-05-21 17:33:41
-@LastEditors: Zhu Jian
+LastEditTime: 2020-10-22 19:04:31
+LastEditors: windyoung
 @Description: 
-@FilePath: \py_practice\P6_Zcache.py
+FilePath: \py_practice\py_task\P6_Zcache.py
 @
 '''
 import redis
+
 import T_OFFER_INST_RECORD_pb2 as kk
 '''
 作业6 查询 zcache中 一个号码 订购的所有offer列表 @所有人  zcache 的地址 @崔昕晖(崔昕晖)  发一下ip和端口

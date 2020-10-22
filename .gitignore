@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 .vscode
+qmdb/
+a_zqs/
 
 # C extensions
 *.so

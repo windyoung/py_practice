@@ -1,14 +1,15 @@
 #-*- coding:utf-8 -*-
 
 '''
-@Author: Zhu Jian
+@Author: windyoung
 @Date: 2020-04-13 19:16:58
-LastEditTime: 2020-10-22 16:38:36
-LastEditors: Zhu Jian
+LastEditTime: 2020-10-22 19:03:06
+LastEditors: windyoung
 @Description: 
 FilePath: \py_practice\1.py
 @
 '''
+
 # print(a)
 
 # a='a'

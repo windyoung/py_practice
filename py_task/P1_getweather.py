@@ -1,12 +1,12 @@
 # coding=utf-8
 #!/usr/bin/env python3
 '''
-@Author: Zhu Jian
+@Author: windyoung
 @Date: 2020-04-11 23:25:35
-@LastEditTime: 2020-04-20 16:17:26
-@LastEditors: Zhu Jian
+LastEditTime: 2020-10-22 19:03:52
+LastEditors: windyoung
 @Description: 
-@FilePath: \py_practice\getweather.py
+FilePath: \py_practice\py_task\P1_getweather.py
 @
 '''
 

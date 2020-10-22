@@ -2,14 +2,15 @@
 # 作业4：使用WS接口，查询用户的余额，并把返回包的所有属性 使用yaml格式写到文件中 （需要区分父子节点）
 # url = 'http://172.16.24.191:9902/services/DbepService.DbepServiceHttpSoap11Endpoint/'
 '''
-@Author: Zhu Jian
+@Author: windyoung
 @Date: 2020-04-30 10:05:06
-@LastEditTime: 2020-05-20 16:43:20
-@LastEditors: Zhu Jian
+LastEditTime: 2020-10-22 19:04:20
+LastEditors: windyoung
 @Description: 
-@FilePath: \py_practice\P5_ADDCUST.py
+FilePath: \py_practice\py_task\P5_ADDCUST.py
 @
 '''
+
 # 报文
 # <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://com.ztesoft.zsmart/xsd" xmlns:par="http://com.ztesoft.zsmart/xsd/param">
 #    <soapenv:Header/>

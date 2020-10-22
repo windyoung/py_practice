@@ -1,12 +1,12 @@
 # coding=utf-8
 #!/usr/bin/env python3
 '''
-@Author: Zhu Jian
+@Author: windyoung
 @Date: 2020-04-15 16:25:26
-@LastEditTime: 2020-04-20 21:17:40
-@LastEditors: Zhu Jian
+LastEditTime: 2020-10-22 19:04:00
+LastEditors: windyoung
 @Description: 
-@FilePath: \py_practice\db_data_comp.py
+FilePath: \py_practice\py_task\P3_db_data_comp.py
 @
 '''
 

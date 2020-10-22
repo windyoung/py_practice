@@ -1,12 +1,12 @@
 import requests
 import time
 '''
-@Author: Zhu Jian
+@Author: windyoung
 @Date: 2020-07-30 23:10:19
-@LastEditTime: 2020-07-30 23:12:22
-@LastEditors: Zhu Jian
+LastEditTime: 2020-10-22 19:03:33
+LastEditors: windyoung
 @Description: 
-@FilePath: \pytest3d:\apps\py_work\py_practice\mi.py
+FilePath: \py_practice\mi.py
 @
 '''
 

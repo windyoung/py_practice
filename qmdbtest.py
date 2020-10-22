@@ -1,10 +1,10 @@
 # -*- coding:utf-8 -*-
 
 '''
-@Author: Zhu Jian
+@Author: windyoung
 @Date: 2020-05-20 16:43:05
-LastEditTime: 2020-09-14 23:29:53
-LastEditors: Zhu Jian
+LastEditTime: 2020-10-22 19:03:26
+LastEditors: windyoung
 @Description: 
 FilePath: \py_practice\qmdbtest.py
 @

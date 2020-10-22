@@ -2,12 +2,12 @@
 # 作业4：使用WS接口，查询用户的余额，并把返回包的所有属性 使用yaml格式写到文件中 （需要区分父子节点）
 # url = 'http://172.16.24.191:9902/services/DbepService.DbepServiceHttpSoap11Endpoint/'
 '''
-@Author: Zhu Jian
+@Author: windyoung
 @Date: 2020-04-30 10:05:06
-@LastEditTime: 2020-05-14 15:08:50
-@LastEditors: Zhu Jian
+LastEditTime: 2020-10-22 19:04:10
+LastEditors: windyoung
 @Description: 
-@FilePath: \py_practice\P4_wstest4.py
+FilePath: \py_practice\py_task\P4_wstest4.py
 @
 '''
 # 报文
