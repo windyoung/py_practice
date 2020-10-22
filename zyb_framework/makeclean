@@ -1,0 +1,20 @@
+##CHECKED_VERSION=FR3|FILE_PATH=BASEDIR/
+HOME_DIR=`pwd`
+
+
+ALL_DIR="helper dbc zmq jsoncpp"
+
+
+for cur_dir in $ALL_DIR
+do
+	echo "Cleaning $HOME_DIR/$cur_dir ..."
+	echo " "
+	cd $HOME_DIR
+	cd $cur_dir
+	make clean
+	echo " "
+done
+
+cd $HOME_DIR
+	
+

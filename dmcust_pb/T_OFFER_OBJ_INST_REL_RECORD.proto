@@ -1,0 +1,14 @@
+syntax = "proto2";
+package dmcust;
+message OfferObjInstRelRecord
+{
+    required int64 offer_obj_inst_rel_id    = 1;
+    required string obj_type                = 2;
+    required int64 instance_id              = 3;
+    required int64 offer_inst_id            = 4;
+    required int64 role_cd                  = 5;
+    required int64 role_id                  = 6;
+    required int64 eff_date                 = 7;
+    optional int64 exp_date                 = 8;
+    required string status_cd               = 9;
+}

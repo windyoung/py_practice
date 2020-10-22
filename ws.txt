@@ -1,0 +1,15 @@
+queryAcctBalResponse:
+  return:
+    balDtoList:
+      acctResCode: LOCAL_CURRENCY
+      acctResName: Local Currency
+      balId: '15449199'
+      balance: '-0.39'
+      effDate: '2016-01-01 00:00:00'
+      expDate: '2020-07-07 13:49:50'
+      grossBalance: '7.24'
+      offerCode: null
+      unitCode: null
+      updateDate: '2020-04-08 13:49:50'
+    resultCode: '0000'
+    resultMsg: Success to call interface

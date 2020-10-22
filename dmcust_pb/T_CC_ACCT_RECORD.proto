@@ -1,0 +1,12 @@
+syntax = "proto2";
+package dmcust;
+message CcAcctRecord
+{
+    required int64  acct_id      = 1;
+    required int64  cc_type      = 2;
+    required int64  cc_seq       = 3;
+    required int64  seq          = 4;
+    required int64  credit_limit = 5;
+    required int64  eff_date     = 6;
+    optional int64  exp_date     = 7;
+}

@@ -1,0 +1,10 @@
+syntax = "proto2";
+package dmcust;
+message ChargingConfigItemRecord
+{
+    required string config_code = 1;
+    required int64  seq         = 2;
+    required string value       = 3;
+    required int64  eff_date    = 4;
+    optional int64  exp_date    = 5;
+}

@@ -1,0 +1,16 @@
+syntax = "proto2";
+package dmcust;
+message ContractItemRecord
+{
+    required int64  contract_item_id       = 1;
+    required int64  price_book_ver_id      = 2;
+    required int64  offer_id               = 3;
+    required int64  tariff_plan_param_id   = 4;
+    required int64  param_id               = 5;
+    required int64  type                   = 6;
+    required int64  cell_id                = 7;
+    required string value                  = 8;
+    required int64  eff_date               = 9;
+    required string val_type               = 10;
+    optional int64  exp_date               = 11;
+}

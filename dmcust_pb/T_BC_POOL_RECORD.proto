@@ -1,0 +1,12 @@
+syntax = "proto2";
+package dmcust;
+message BcPoolRecord
+{
+    required int64  prod_inst_id = 1;
+    required int64  seq          = 2;
+    required int64  acct_id      = 3;
+    required string pool_flag    = 4;
+    required int64  eff_date     = 5;
+    optional int64  exp_date     = 6;
+    required string state        = 7;
+}

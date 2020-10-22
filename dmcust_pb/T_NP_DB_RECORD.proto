@@ -1,0 +1,10 @@
+syntax = "proto2";
+package dmcust;
+message NpDbRecord
+{
+    required string begin_nbr  = 1;
+    required int64  seq        = 2;
+    required string operator   = 3;
+    required int64  eff_date   = 4;
+    optional int64  exp_date   = 5;
+}

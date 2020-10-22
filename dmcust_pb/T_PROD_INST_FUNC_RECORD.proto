@@ -1,0 +1,15 @@
+syntax = "proto2";
+package dmcust;
+message ProdInstFuncRecord
+{
+    required int64 prod_inst_id      = 1;
+    required int64 seq               = 2;
+    required int64 prod_id           = 3;
+    required int64 acc_prod_inst_id  = 4;
+    required string status_cd        = 5;
+    required int64 eff_date          = 6;
+    optional int64 exp_date          = 7;
+    required int64 first_finish_date = 8;
+    optional int64 begin_rent_date   = 9;
+}
+

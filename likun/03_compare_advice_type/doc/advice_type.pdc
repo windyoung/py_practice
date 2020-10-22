@@ -1,0 +1,143 @@
+-- Create table
+create table ADVICE_TYPE
+(
+  advice_type         NUMBER(6) not null,
+  advice_channel      VARCHAR2(2) not null,
+  advice_type_name    VARCHAR2(60) not null,
+  ak_code             VARCHAR2(60),
+  parent_advice_type  NUMBER(6),
+  is_rule             CHAR(1) default 'N' not null,
+  advice_param_code   VARCHAR2(60),
+  comments            VARCHAR2(120),
+  subject_define      VARCHAR2(4000),
+  msg_define          CLOB,
+  disabled            CHAR(1),
+  eff_time            DATE,
+  exp_time            DATE,
+  std_code            VARCHAR2(60),
+  priority            CHAR(1),
+  advice_type_sort_id NUMBER(6),
+  advice_catg         VARCHAR2(60),
+  update_date         DATE default SYSDATE not null,
+  is_his              CHAR(1),
+  delay_time          NUMBER(6),
+  src_nbr             VARCHAR2(1000),
+  is_old_version      CHAR(1),
+  sender_param        VARCHAR2(1000),
+  times               NUMBER(4),
+  time_interval       NUMBER(6),
+  sp_id               NUMBER(6)
+)
+tablespace TAB_CC
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Add comments to the table
+comment on table ADVICE_TYPE
+  is '通知类型';
+-- Add comments to the columns
+comment on column ADVICE_TYPE.advice_type
+  is '通知方式';
+comment on column ADVICE_TYPE.advice_channel
+  is '通知渠道';
+comment on column ADVICE_TYPE.advice_type_name
+  is '名称';
+comment on column ADVICE_TYPE.ak_code
+  is 'AK编码';
+comment on column ADVICE_TYPE.parent_advice_type
+  is '上级通知方式';
+comment on column ADVICE_TYPE.is_rule
+  is '是否使用规则';
+comment on column ADVICE_TYPE.advice_param_code
+  is '规则参数编码';
+comment on column ADVICE_TYPE.comments
+  is '说明';
+comment on column ADVICE_TYPE.subject_define
+  is '缺省主题模板';
+comment on column ADVICE_TYPE.msg_define
+  is '缺省消息模板';
+comment on column ADVICE_TYPE.disabled
+  is '作废消息,缺省为N，发送该消息，Y-不发送这个消息，其他发送';
+comment on column ADVICE_TYPE.eff_time
+  is '生效时间,只有时分秒有效';
+comment on column ADVICE_TYPE.exp_time
+  is '失效时间,只有时分秒有效';
+comment on column ADVICE_TYPE.std_code
+  is '编码';
+comment on column ADVICE_TYPE.priority
+  is '优先级';
+comment on column ADVICE_TYPE.advice_type_sort_id
+  is '模板目录标识';
+comment on column ADVICE_TYPE.advice_catg
+  is '通知大类,格式|X||Y||Z|,表示适用X,Y,Z三种场景';
+comment on column ADVICE_TYPE.update_date
+  is '更新时间';
+comment on column ADVICE_TYPE.is_his
+  is '是否记录历史';
+comment on column ADVICE_TYPE.delay_time
+  is '延迟发送时间';
+comment on column ADVICE_TYPE.src_nbr
+  is '发送源号码';
+comment on column ADVICE_TYPE.is_old_version
+  is '是否旧版本';
+comment on column ADVICE_TYPE.sender_param
+  is '发送参数';
+comment on column ADVICE_TYPE.times
+  is '多次发送次数';
+comment on column ADVICE_TYPE.time_interval
+  is '多次发送间隔';
+comment on column ADVICE_TYPE.sp_id
+  is 'SP_ID';
+-- Create/Recreate primary, unique and foreign key constraints
+alter table ADVICE_TYPE
+  add constraint PK_ADVICE_TYPE primary key (ADVICE_TYPE)
+  using index
+  tablespace TAB_CC
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+alter table ADVICE_TYPE
+  add constraint AK_ADV_TYPE_STD_CODE unique (STD_CODE)
+  using index
+  tablespace TAB_CC
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+alter table ADVICE_TYPE
+  add constraint AK_KEY_2_ADVICE_T unique (AK_CODE)
+  using index
+  tablespace TAB_CC
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+alter table ADVICE_TYPE
+  add constraint FK_ADVICE_T_REFERENCE_ADVICE_C foreign key (ADVICE_CHANNEL)
+  references ADVICE_CHANNEL (ADVICE_CHANNEL);

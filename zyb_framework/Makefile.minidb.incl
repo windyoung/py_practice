@@ -1,0 +1,154 @@
+##CHECKED_VERSION=FR3|FILE_PATH=BASEDIR/
+#SRCHOME = /TT/DailyBuild/work
+#PLATFORM = IBM
+#DATABASE = ORACLE
+#OBJECT_MODE = 32
+#COMPILE_MODE = DEBUG
+
+include ../Makefile.incl.platform
+#############################
+# Application Dirs and Libs #
+#############################
+HELPERDIR         = $(SRCHOME)/helper
+ORACLEDBCDIR      = $(SRCHOME)/dbc
+MINIDBDIR         = $(SRCHOME)/minidb
+PUBLICDIR         = $(SRCHOME)/public
+
+APP_INC = -I$(HELPERDIR) \
+          -I$(ORACLEDBCDIR) \
+          -I$(MINIDBDIR) \
+          -I$(PUBLICDIR)
+
+APP_LIB = -L$(MINIDBDIR)          -lminidb \
+          -L$(HELPERDIR)          -lhelper \
+          -L$(ORACLEDBCDIR)       -ldbc \
+          -L$(PUBLICDIR)          -lpublic
+  
+##############################
+# 32bit or 64bit object mode #
+##############################
+ORACLE_LIB32=lib32
+ORACLE_LIB64=lib
+
+#########################
+# Debug or Release mode #
+#########################
+COMPILE_DEBUG     = -g
+COMPILE_RELEASE   = -g -O
+BASEFLAGS_DEBUG   =  -D_DEBUG -D_PERF $(TRACK_FLAG) $(POST_PAID_FLAG)
+BASEFLAGS_RELEASE =  $(TRACK_FLAG)
+
+####################
+# PLATFORM SETTING #
+####################
+
+IBM_COMPILER = GNUC
+SUN_COMPILER = GNUC
+HP_COMPILER  = aCC
+LINUX_COMPILER= GNUC
+CYGWIN_COMPILER= GNUC
+
+IBM_CC	  = xlC
+SUN_CC	  = CC
+HP_CC     = aCC
+LINUX_CC  = g++
+CYGWIN_CC = g++
+
+SUN_AR   = CC -G -KPIC -DSYB_LP64 -m64 -D_REENTRANT -w  -DSIZEOF_LONG=8 -misalign -o
+IBM_AR   = xlC -q$(OBJECT_MODE) -G -qmkshrobj  -o
+HP_AR    = aCC -b +DD$(OBJECT_MODE) +u1  -o  
+LINUX_AR = g++ -shared -o 
+CYGWIN_AR= ar -rv
+
+IBM_LINKFLAGS   =  -q$(OBJECT_MODE) -brtl
+SUN_LINKFLAGS   = -DSYB_LP64 -KPIC -m64 -D_REENTRANT -w  -DSIZEOF_LONG=8 -misalign  
+HP_LINKFLAGS    = +DD$(OBJECT_MODE) -AA -mt -Wl,+as,mpas 
+LINUX_LINKFLAGS =
+CYGWIN_LINKFLAGS=
+
+IBM_FLAGS   = -q$(OBJECT_MODE)
+SUN_FLAGS   = -DSYB_LP64 -KPIC -m64 -D_REENTRANT -w  -DSIZEOF_LONG=8 -misalign -D_REENTRANT -w
+HP_FLAGS    = +Z +DD$(OBJECT_MODE) -AA -mt +u1 -DHP_UNIX -D_64_BIT_ -w -DOS_HP -D_BIG_ENDIAN_ -D_REENTRANT
+LINUX_FLAGS =
+CYGWIN_FLAGS=
+
+SUN_LIBS   = -ldl -lrt
+IBM_LIBS   = -lpthread  -lm  
+HP_LIBS	   = -lpthread
+LINUX_LIBS = -lutil 
+CYGWIN_LIBS=
+
+SUN_TRUESUFFIX   = so 
+IBM_TRUESUFFIX   = so
+HP_TRUESUFFIX	 = sl
+LINUX_TRUESUFFIX = so
+CYGWIN_TRUESUFFIX= dll
+
+####################################
+# 3rd Party Software INCs and LIBs #
+####################################
+SUN_ORACLEINC   = -I$(ORACLE_HOME)/rdbms/demo -I$(ORACLE_HOME)/rdbms/public $(ODBC_INCLUDE)
+SUN_ORACLELIBS   = -L$(ORACLE_HOME)/lib -lclntsh $(ODBC_LIB)
+
+#===============================================
+IBM_ORACLEINC   = -I$(ORACLE_HOME)/rdbms/demo -I$(ORACLE_HOME)/rdbms/public $(ODBC_INCLUDE)
+IBM_ORACLELIBS   = -L$(ORACLE_HOME)/$(ORACLE_LIB$(OBJECT_MODE)) -lclntsh $(ODBC_LIB)
+
+#===============================================
+HP_ORACLEINC   = -I$(ORACLE_HOME)/rdbms/demo -I$(ORACLE_HOME)/rdbms/public
+HP_ORACLELIBS   = -L$(ORACLE_HOME)/$(ORACLE_LIB$(OBJECT_MODE)) -lclntsh
+
+#===============================================
+LINUX_ORACLEINC   = -I$(ORACLE_HOME)/rdbms/demo -I$(ORACLE_HOME)/rdbms/public
+LINUX_ORACLELIBS   = -L$(ORACLE_HOME)/lib -lclntsh
+
+#===============================================
+CYGWIN_ORACLEINC   = -I/usr/include/oracle
+CYGWIN_ORACLELIBS   = -L/lib/oracle -loci
+
+#===============================================
+
+######################### 
+# Choose Platform param #
+#########################
+CCC	     = $($(PLATFORM)_CC)
+LLDFLAGS = $($(PLATFORM)_LINKFLAGS)
+AR       = $($(PLATFORM)_AR)
+COMPILER = $($(PLATFORM)_COMPILER)
+
+ORACLEINC     = $($(PLATFORM)_ORACLEINC)
+ORACLELIBS    = $($(PLATFORM)_ORACLELIBS)
+TRUESUFFIX    = $($(PLATFORM)_TRUESUFFIX)
+
+LONGSIZE = LONG$(OBJECT_MODE)
+CCFLAGS	 = $(COMPILE_$(COMPILE_MODE)) -D$(COMPILER) -D$(LONGSIZE) -DNO_DEBUG_NEW $(BASEFLAGS_$(COMPILE_MODE)) -DOS_$(PLATFORM) -D_$(PLATFORM) -D_$(DATABASE) $($(PLATFORM)_FLAGS) -DDB_$(DATABASE)
+
+LOCALINC = $($(DATABASE)INC) $(APP_INC)
+LOCALLIB = $(APP_LIB) $($(DATABASE)LIBS) $($(PLATFORM)_LIBS) 
+
+####################
+# Complie and Link #
+####################
+.SUFFIXES: .c .cpp .o .exe
+
+.c.o:
+	$(CCC) -c $(CCFLAGS) -c $< -o $*.o $(LOCALINC)
+	
+.cpp.o:
+	$(CCC) -c $(CCFLAGS) -c $< -o $*.o $(LOCALINC)
+
+.o.exe: python.exp
+	$(CCC)  $(LLDFLAGS) -o $* $< $(LOCALLIB)
+
+.cpp.exe:
+	$(CCC) -c $(CCFLAGS) -c $< -o $*.o $(LOCALINC)
+	$(CCC)  $(LLDFLAGS) -o $* $*.o  $(LOCALLIB)
+
+.c.exe:
+	$(CCC) -c $(CCFLAGS) -c $< -o $*.o $(LOCALINC)
+	$(CCC)  $(LLDFLAGS) -o $* $*.o  $(LOCALLIB)
+	
+python.exp:
+	nm -Bex -X64 $(PYTHONLIBPATH)/$(PYTHONLIBNAME) \
+	| sed -e '/ [^BDT] /d' -e '/\./d' -e 's/.* [BDT] //' -e '/::/d'\
+	| sort | uniq >> python.exp

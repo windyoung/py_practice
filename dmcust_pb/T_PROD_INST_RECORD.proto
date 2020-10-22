@@ -1,0 +1,23 @@
+syntax = "proto2";
+package dmcust;
+message ProdInstRecord
+{
+    required int64 prod_inst_id              = 1;
+    required int64 seq                       = 2;
+    required int64 prod_id                   = 3;
+    required string  area_code               = 4;
+    required string  acc_num                 = 5;
+    required string  payment_mode_cd         = 6;
+    required string status_cd                = 7;
+    required int64 eff_date                  = 8;
+    optional int64 exp_date                  = 9;
+    required int64 owner_cust_id             = 10;
+    required int64 first_finish_date         = 11;
+    optional int64 begin_rent_date           = 12;
+    optional int64 status_date               = 13;
+    optional int64 active_date               = 14;
+    optional int64 billing_flag_id 	         = 15;
+    optional string prod_type_cd 	           = 16; 
+    optional int64 routing_id                = 17;
+}
+

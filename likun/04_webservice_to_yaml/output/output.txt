@@ -1,0 +1,51 @@
+AcntStopDate: null
+ActiveStopDate: '2020-07-04'
+Address: null
+BalDTOlist:
+  BalDto:
+  - AcctResCode: '0'
+    AcctResName: Main Balance
+    Balance: -593608
+    EffDate: 2020-04-25 00-00-00
+    ExpDate: 2020-07-04 23-59-59
+    ReservedBalance: '0'
+  - AcctResCode: '5'
+    AcctResName: DATA_Bonus
+    Balance: -52428800
+    EffDate: 2020-05-02 00-00-00
+    ExpDate: 2020-05-03 23-59-59
+    ReservedBalance: '0'
+CertNo: test_12345679
+CertType: 1
+CompletedDate: 2020-05-02 22-45-50
+CustType: A
+CustomerName: test_new5
+DefLang: '1'
+DisableStopDate: '2020-08-18'
+FellowISDNDtoList: null
+GPRSChargeFlag: 1
+ICCID: '17022400000037268534'
+IMSI: '520002007077703'
+LowerThreshold: 200000
+MSISDN: '6620240331038'
+MaxPerRefill: 50000000
+PricePlanCode: R17N299MM
+PricePlanDtoList:
+  PricePlanDto:
+  - CreatedDate: 2020-05-02 22-45-50
+    EffDate: 2020-05-02 22-45-50
+    ExpDate: null
+    PricePlanAttrDtoList: null
+    PricePlanCode: R17N299MM
+    PricePlanName: R17N299MM
+ProductCode: PreRB
+ProductName: PreRB
+RefillAble: Y
+RefillErrorTimes: 0
+RefillTempErrorTimes: 0
+RoutingID: 41
+ServiceStopDate: '2119-05-01'
+State: A
+StateSet: '00000000000000'
+SuspendStopDate: '2020-08-03'
+

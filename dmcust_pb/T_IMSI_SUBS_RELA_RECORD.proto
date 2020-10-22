@@ -1,0 +1,7 @@
+syntax = "proto2";
+package dmcust;
+message ImsiSubsRelaRecord
+{
+    required int64  subs_id = 1;
+    required string imsi   = 2;
+}

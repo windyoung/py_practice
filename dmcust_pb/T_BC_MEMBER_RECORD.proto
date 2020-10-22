@@ -1,0 +1,14 @@
+syntax = "proto2";
+package dmcust;
+message BcMemberRecord
+{
+    required int64  bc_member_id   = 1;
+    required int64  seq            = 2;
+    required int64  acct_id        = 3;
+    required int64  cust_id        = 4;
+    required int64  subs_id        = 5;
+    required int64  eff_date       = 6;
+    optional int64  exp_date       = 7;
+    required string service_number = 8;
+    required string state          = 9;
+}

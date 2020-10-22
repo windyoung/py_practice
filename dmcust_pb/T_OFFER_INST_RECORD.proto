@@ -1,0 +1,14 @@
+syntax = "proto2";
+package dmcust;
+message OfferInstRecord
+{
+    required int64 instance_id              = 1;
+    required int64 offer_inst_id            = 2;
+    required int64 offer_id                 = 3;
+    required int64 seq                      = 4;
+    required int64 eff_date                 = 5;
+    optional int64 exp_date                 = 6;
+    required string status_cd               = 7;
+    optional int64 begin_rent_date          = 8;
+    optional string prod_inst_id_list       = 9;
+}

@@ -1,0 +1,10 @@
+syntax = "proto2";
+package dmcust;
+message CustAttrValueRecord
+{
+    required int64  cust_id    = 1;
+    required int64  attr_id    = 2;
+    required string value      = 3;
+    required int64  eff_date   = 4;
+    optional int64  exp_date   = 5;
+}

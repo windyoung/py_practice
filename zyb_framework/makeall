@@ -1,0 +1,422 @@
+##CHECKED_VERSION=FR3|FILE_PATH=BASEDIR/
+###########################
+# Application DIRs & APPs #
+###########################
+HELPER_DIR="helper dbc jsoncpp"
+ZMQ_DIR="zmq"
+ZXINOS_DIR="zxinos"
+MINIDB_DIR="minidb"
+
+
+#################
+# Default Value #
+#################
+HOME_DIR=`pwd`
+isInstall='N'
+isHelper='N'
+isMiniDB='N'
+isZXINOS='N'
+isZmq='N'
+ODBC_TYPE='_TT'  #_SOLID | _TT | _ALT | _QM
+
+isQMDB='N'
+
+DATABASE=ORACLE
+OBJECT_MODE=64
+COMPILE_MODE=RELEASE
+INSTALL_DIR='../bin'
+MAKE_LIB=N
+TRACK_FLAG='-D_NOTRACK'
+DEBUG_NEW=NO_DEBUG_NEW
+VERID=''
+
+###add for version infomation
+OSVERSION_INI=`uname -a`
+OSVERSION_DES=`echo $OSVERSION_INI|awk '{print $1"_"$2}'`
+ORAVERSION_INI=`sqlplus -V`
+ORAVERSION_DES=`echo $ORAVERSION_INI|awk '{print "ORACLE_"$2"_"$3}'`
+
+
+###############
+# Parse Param #
+###############
+
+while [ "$1" ]
+do
+    #################
+    #choose datebase#
+    ################# 
+    if [ "$1" = "oracle" ]
+    then
+        DATABASE="ORACLE"
+    fi;
+
+    if [ "$1" = "noodbc" ]
+    then
+        ODBC_FLAG=-D_NO_ODBC
+    fi;
+
+    if [ "$1" = "assertparam" ]
+    then
+        ASSERT_FLAG=-D_ASSERT_PARAM
+    fi;
+
+    if [ "$1" = "optimezedate" ]
+    then
+        OPTIMIZE_DATE=-D_IMP_DATE
+    fi;   
+    
+    if [ "$1" = "tt"  ]
+    then
+        ODBC_TYPE="_TT"
+    fi;
+	
+    if [ "$1" = "alt"  ]
+    then
+        ODBC_TYPE="_ALT"
+    fi;
+	
+	if [ "$1" = "qmdb"  ]
+    then
+        ODBC_TYPE="_QM"
+    fi;
+
+    ####################
+    #choose object mode#
+    ####################
+
+    if [ "$1" = "obj32" ]
+    then
+			OBJECT_MODE="32"
+    fi;
+
+    if [ "$1" = "obj64" ]
+    then
+			OBJECT_MODE="64"
+    fi;
+
+
+
+    ####################
+    # choose dir       #
+    ####################
+
+    if [ "$1" = "helper" ]
+    then
+            isHelper="Y"
+    fi;
+    
+    if [ "$1" = "zmq" ]
+    then
+            isZmq="Y"
+    fi;
+
+    if [ "$1" = "minidb" ]
+    then
+            isMiniDB="Y"
+    fi;
+    
+    if [ "$1" = "zxinos" ]
+    then 
+			isZXINOS="Y"
+    fi;
+    
+    if [ "$1" = "all" ]
+    then 
+            isHelper="Y"
+            isMiniDB="Y"
+			isZXINOS="Y"
+			isZmq="Y"
+    fi;
+
+    #####################
+    #choose compile mode#
+    #####################
+
+    if [ "$1" = "debug" ]
+    then
+			COMPILE_MODE="DEBUG"
+			INSTALL_DIR='../dbin'
+    fi;
+
+    if [ "$1" = "release" ]
+    then
+			COMPILE_MODE="RELEASE"
+    fi;
+    
+    #####################
+    #make libary only   #
+    #####################
+
+    if [ "$1" = "lib" ]
+    then
+			MAKE_LIB=Y
+    fi;
+    
+    #####################
+    #make debug_new obj #
+    #####################
+    if [ "$1" = "need_debug_new" ]
+    then
+			DEBUG_NEW_FLAG='debug_new.o'
+            DEBUG_NEW=_BORLAND_C_
+    fi;     
+    ####################
+    # test and install #
+    ####################
+    if [ "$1" = "install" ]
+    then
+			isTest='N'
+			isInstall='Y'
+			MAKE_LIB=Y
+    fi;
+   
+    if [ "$1" = "ver" ]
+    then
+        if [ ! "$2" ]
+        then
+          echo Version ID is missing! use makeall help get more information.
+          exit
+        fi
+        strVer=$2
+        if [ "$ODBC_TYPE" = "_TT" ]
+        then
+            TTVERSION_ORA=`ttversion`
+            TTVERSION_DES=`echo $TTVERSION_ORA|awk '{print $1"_"$2"_"$3}'`
+            VERID="ZSmart_${strVer},Build Date:`date +%G%m%d`,$OSVERSION_DES,$COMPILE_MODE,$ORAVERSION_DES,$TTVERSION_DES" 
+        else
+            VERID="ZSmart_${strVer},Build Date:`date +%G%m%d`,$OSVERSION_DES,$COMPILE_MODE,$ORAVERSION_DES,$ODBC_TYPE" 
+        fi
+        shift
+    fi;
+    
+    if [ "$1" = "help" ]
+    then
+            echo
+            echo "Usage:"
+            echo "$0 [debug/release] [lib] [noodbc] [obj32/obj64] [install] [ver <Version ID>] [need_debug_new] [mysql]"
+			echo
+            echo "Note: "
+            echo "     obj32 : Compile in 32Bit-Object-Mode"
+            echo "     obj64 : Compile in 64Bit-Object-Mode"
+            echo "     install: Compile , Link and publish "
+            echo "     lib   : Compile only,and publich .a file to $PROJECT_DIR"
+            echo "     noodbc: Compile with out TimesTen ODBC library"
+            echo "     ver <VERID>: Add Version ID and BUILDING Number to binarys and librarys "
+            echo "Example: $0 helper release obj64 install"
+            echo "Example: $0 minidb release obj64 install"
+            echo "Example: $0 zxinos release obj64 install"
+            echo "Example: $0 zmq release obj64 install"
+            echo "Example: $0 all release obj64 install"
+            echo "Example: $0 helper install"
+            echo "Example: $0 helper install need_debug_new"
+            echo "Example: $0 helper  mysql install"
+            echo "Example: $0 minidb install"
+            echo "Example: $0 zxinos install"
+            echo "Example: $0 zmq install"
+            echo "Example: $0 al install"
+			echo "         Complie in 64 bit optimized ,link and publish "
+            echo 
+            exit 1;
+    fi;
+
+shift
+done;	
+
+while [ "$1" ]
+do
+    if [ "$1" = "release" ]
+    then
+        DEBUG_NEW_FLAG=''
+        DEBUG_NEW=NO_DEBUG_NEW
+    fi;
+shift
+done;
+
+case `uname` in
+    AIX)
+        PLATFORM=IBM
+        ;;
+    SunOS)
+				PLATFORM=SUN
+				OBJECT_MODE=64
+        ;;
+    Linux)
+				PLATFORM=LINUX
+				OBJECT_MODE=64
+        ;;
+    HP-UX)
+				PLATFORM=HP
+        ;;
+    CYGWIN_NT-5.1)
+				PLATFORM=CYGWIN
+				OBJECT_MODE=32
+        ;;        
+	*)
+	    ;;
+esac
+
+LANG=en_US
+curDate=`date`
+
+echo SRCHOME = $HOME_DIR  >./Makefile.incl.platform
+echo PLATFORM = $PLATFORM >>./Makefile.incl.platform
+echo DATABASE = $DATABASE >>./Makefile.incl.platform
+echo OBJECT_MODE = $OBJECT_MODE   >>./Makefile.incl.platform
+echo COMPILE_MODE = $COMPILE_MODE >>./Makefile.incl.platform
+echo ODBC_FLAG = $ODBC_FLAG >>./Makefile.incl.platform
+#echo VERID = $VERID >>./Makefile.incl.platform
+#echo VERID = ZSmart_$strVer \" "  " \" Build: $curDate >>./Makefile.incl.platform
+echo ASSERT_FLAG = $ASSERT_FLAG >>./Makefile.incl.platform
+#echo OPTIMIZE_DATE = $OPTIMIZE_DATE >>./Makefile.incl.platform
+echo DEBUG_NEW_FLAG = $DEBUG_NEW_FLAG >>./Makefile.incl.platform
+echo MYSQL_OBJ = $MYSQL_OBJ >>./Makefile.incl.platform
+echo DEBUG_NEW=$DEBUG_NEW >>./Makefile.incl.platform
+
+##zmp:861089
+if [ "$VERID" ]
+then
+    echo VERID = $VERID >>./Makefile.incl.platform
+else
+
+    if [ "$ODBC_TYPE" = "_TT" ]
+        then
+            TTVERSION_ORA=`ttversion`
+            TTVERSION_DES=`echo $TTVERSION_ORA|awk '{print $1"_"$2"_"$3}'`
+            VERID="NONE,Build Date:`date +%G%m%d`,$OSVERSION_DES,$COMPILE_MODE,$ORAVERSION_DES,$TTVERSION_DES"
+    else
+            VERID="NONE,Build Date:`date +%G%m%d`,$OSVERSION_DES,$COMPILE_MODE,$ORAVERSION_DES,$ODBC_TYPE"
+    fi
+    echo VERID = $VERID >>./Makefile.incl.platform
+fi
+
+TIMESTEN_VER_FLAG=TT_NOUSE
+if [ "$ODBC_TYPE" = "_TT" ]
+then
+	echo ODBC_FILETAG = TT >>./Makefile.incl.platform
+	echo COMPILE_ODBC_FLAG = _TT >>./Makefile.incl.platform
+	echo ODBC_INCLUDE = -I$TIMESTEN_HOME/include >>./Makefile.incl.platform
+	echo ODBC_LIB = -L$TIMESTEN_HOME/lib -ltten >>./Makefile.incl.platform
+
+	TT_VER=`ttversion |grep "TimesTen Release"|awk '{print $3}'`
+	VER_DOMAN1=`echo |awk '{split("'${TT_VER}'", array, ".");print array[1]}'`
+	VER_DOMAN2=`echo |awk '{split("'${TT_VER}'", array, ".");print array[2]}'`
+	VER_DOMAN3=`echo |awk '{split("'${TT_VER}'", array, ".");print array[3]}'`
+	TT_VER=`echo $VER_DOMAN1$VER_DOMAN2$VER_DOMAN3`
+	if [ $TT_VER -ge 1122 ]
+	then
+		TIMESTEN_VER_FLAG=TT_1122
+	else
+		TIMESTEN_VER_FLAG=TT_$TT_VER
+	fi
+fi
+echo TIMESTEN_VER_FLAG=$TIMESTEN_VER_FLAG>>./Makefile.incl.platform
+
+if [ "$ODBC_TYPE" = "_QM" ]
+then
+	echo ODBC_FILETAG = QM >>./Makefile.incl.platform
+	echo COMPILE_ODBC_FLAG = _QM >>./Makefile.incl.platform
+	#echo ODBC_INCLUDE = -I$QuickMDB_HOME >>./Makefile.incl.platform
+	#echo ODBC_LIB = -L$QuickMDB_HOME/lib -lmdbHelper -lmdbInterface -lmdbControl -lmdbCommon -lmdbAgent >>./Makefile.incl.platform
+fi
+
+if [ "$ODBC_TYPE" = "_ALT" ]
+then
+	echo ODBC_FILETAG = ALT >>./Makefile.incl.platform
+	echo COMPILE_ODBC_FLAG = _ALT >>./Makefile.incl.platform
+	echo ODBC_INCLUDE = -I$ALTIBASE_HOME/include >>./Makefile.incl.platform
+	echo ODBC_LIB = -L$ALTIBASE_HOME/lib -lodbccli_sl >>./Makefile.incl.platform
+fi
+
+if [ "$ODBC_TYPE" = "_SOLD" ]
+then
+echo ODBC_FILETAG = Sol >>./Makefile.incl.platform
+echo COMPILE_ODBC_FLAG = _SOLID  -DSS_UNIX -DUNIX_64BIT -DA5X64  >>./Makefile.incl.platform
+echo ODBC_INCLUDE = -I$SOLIDDB_HOME/include >>./Makefile.incl.platform
+echo ODBC_LIB = $SOLIDDB_HOME/lib/solidodbcu.a >>./Makefile.incl.platform
+fi
+
+if [ "$isZmq" = "Y" ]
+then
+        cd $HOME_DIR
+        python -c "import   py_compile;py_compile.compile('GetDBPassword.py')"
+        for zmq_dir in $ZMQ_DIR
+        do
+                echo "Making $HOME_DIR/$zmq_dir ..."
+                echo " "
+                cd $HOME_DIR
+                cd $zmq_dir
+                make all
+                echo " "
+        done
+fi
+
+if [ "$isHelper" = "Y" ]
+then
+        cd $HOME_DIR
+        python -c "import   py_compile;py_compile.compile('GetDBPassword.py')"
+        for helper_dir in $HELPER_DIR
+        do
+                echo "Making $HOME_DIR/$helper_dir ..."
+                echo " "
+                cd $HOME_DIR
+                cd $helper_dir
+                make all
+                echo " "
+        done
+fi
+
+if [ "$isMiniDB" = "Y" ]
+then
+	for minidb_dir in $MINIDB_DIR
+	do
+		echo "Making $HOME_DIR/$minidb_dir ..."
+		echo " "
+		cd $HOME_DIR
+		cd $minidb_dir
+		make all
+		echo " "
+	done
+fi
+
+if [ "$isZXINOS" = "Y" ]
+then
+        for zxinos_dir in $ZXINOS_DIR
+        do
+                echo "Making $HOME_DIR/$zxinos_dir ..."
+                echo " "
+                cd $HOME_DIR
+                cd $zxinos_dir
+                make all
+                if [ "$isInstall" = "Y" ]
+                then 
+                    make build
+                fi                
+                echo " "
+        done
+fi
+
+cd $HOME_DIR
+
+if [ "$MAKE_LIB" = "Y" ]
+then
+  if [ ! -d "$PROJECT_DIR/lib" ]
+   then	
+     echo "making dir $PROJECT_DIR/lib"
+     mkdir $PROJECT_DIR/lib
+  fi
+  
+  if [ "$PLATFORM" = "HP" ]
+  then
+  find . -name '*.sl' -print -exec mv {} $PROJECT_DIR/lib/ \;
+  find . -name 'GetDBPassword.pyc' -print -exec mv {} $PROJECT_DIR/bin/ \;
+  mv .FM.ver.info $PROJECT_DIR/bin/
+  else
+  find . -name '*.so' -print -exec cp -f {} $PROJECT_DIR/lib/ \;
+  find . -name 'GetDBPassword.pyc' -print -exec mv {} $PROJECT_DIR/bin/ \;
+  cp .FM.ver.info $PROJECT_DIR/bin/
+  fi
+
+fi 
+echo "Use [ $0 help ] for more Compile option!"
+echo "done!"

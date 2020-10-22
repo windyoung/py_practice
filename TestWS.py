@@ -1,0 +1,230 @@
+# -*- coding:utf-8 -*-
+import unittest
+import cx_Oracle
+import logging
+import logging.config
+from SendWS import WsClient
+import re
+import HTMLTestRunner2
+from datetime import datetime, timedelta
+from random import randint
+from decimal import Decimal
+
+
+class RwLogger(object):
+    def __init__(self, logfile='./SendWS.log', level='DEBUG', logname='root'):
+        self.logger = logging.getLogger(logname)
+        self.logger.setLevel(level)
+        fh = logging.handlers.RotatingFileHandler(filename=logfile)
+        ch = logging.StreamHandler()
+        fh.setLevel(level)
+        ch.setLevel(level)
+
+        # ft = logging.Filter('mylogger1')
+        formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        fh.setFormatter(formatter)
+        ch.setFormatter(formatter)
+        self.logger.addHandler(fh)
+        self.logger.addHandler(ch)
+        # self.logger.addFilter(ft)
+
+    def write(self, level='debug', msg=''):
+        if level == 'debug':
+            self.logger.debug(msg)
+        elif level == 'info':
+            self.logger.info(msg)
+        elif level == 'warn':
+            self.logger.warning(msg)
+        elif level == 'error':
+            self.logger.error(msg)
+        elif level == 'critical':
+            self.logger.critical(msg)
+
+
+# global definition
+rwlogger = RwLogger()
+url = 'http://172.16.24.191:9902/services/DbepService.DbepServiceHttpSoap11Endpoint/'
+content_type = 'text/xml'
+db_connstr = r'oc/1jian8Shu!@10.45.10.164:1521/dbep'
+
+
+
+
+def construct_message(msg_template, msg_param=()):
+    """组装消息"""
+    try:
+        # 消息格式, 有几种DCC消息，就有几种bs_type
+        tmp_msg = msg_template.format(*msg_param)
+        return tmp_msg
+    except Exception as e:
+        rwlogger.write('debug', 'construct source message error: %s'% (str(e)))
+
+
+class TestWSRecharge(unittest.TestCase):
+    def setUp(self):
+        # print "init start"
+        try:
+            self.db_inst = cx_Oracle.connect(db_connstr)
+            self.db_cursor = self.db_inst.cursor()
+            self.ws = WsClient()
+        except Exception as e:
+            rwlogger.write(str(e))
+
+
+    def tearDown(self):
+        # print 'end by tearDown...'
+        # close the database link
+        if hasattr(self, 'db_cursor') and hasattr(self, 'db_inst'):
+            self.db_cursor.close()
+            self.db_inst.close()
+
+    def test_recharge(self):
+        """WS充值基础功能测试用例"""
+        random_pick_sql = '''
+            select '120300402100020'||rownum as transaction_id, '995'||a.acc_num, a.acct_cd, a.offer_id, a.offer_inst_id, a.prod_inst_id
+              from (select a.offer_id, e.acct_cd, a.offer_inst_id, c.prod_inst_id, c.acc_num,
+                           row_number() over(partition by a.offer_id order by DBMS_RANDOM.value) cnt
+                      from offer_inst a, offer_obj_inst_rel b , prod_inst c, prod_inst_acct_rel d, custc.account e
+                       where a.offer_inst_id = b.offer_inst_id
+                       and b.instance_id = c.prod_inst_id
+                       and c.prod_inst_id = d.prod_inst_id
+                       and d.acct_id = e.acct_id
+                       and d.if_default_acct_id = 1
+                       and a.offer_type = 11
+                      and a.status_cd = '1000'
+                      and c.prod_inst_id in (25342393, 25655707, 25663051)) a
+             --where cnt < 2
+            '''
+
+        query_bal_msg = '''<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://com.ztesoft.zsmart/xsd" xmlns:par="http://com.ztesoft.zsmart/xsd/param">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <xsd:queryAcctBal>
+         <!--Optional:-->
+         <xsd:args0>
+            <!--Optional:-->
+            <par:accountCode></par:accountCode>
+            <!--Optional:-->
+            <par:msisdn>{0}</par:msisdn>
+            <!--Optional:-->
+            <par:offerCode></par:offerCode>
+         </xsd:args0>
+      </xsd:queryAcctBal>
+   </soapenv:Body>
+ </soapenv:Envelope>'''
+        recharge_msg = '''<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://com.ztesoft.zsmart/xsd" xmlns:par="http://com.ztesoft.zsmart/xsd/param">
+              <soapenv:Header/>
+              <soapenv:Body>
+                 <xsd:recharging>
+                    <!--Optional:-->
+                    <xsd:args0>
+                       <!--Optional:-->
+                       <par:accountCode>{0}</par:accountCode>
+                       <!--Optional:-->
+                       <par:addBalance>{1}</par:addBalance>
+                       <!--Optional:-->
+                       <par:transactionSn>{2}</par:transactionSn>
+                    </xsd:args0>
+                 </xsd:recharging>
+              </soapenv:Body>
+            </soapenv:Envelope>'''
+
+        # 组装报文的参数
+        try:
+            self.db_cursor.execute(random_pick_sql)
+            msg_param = iter(self.db_cursor.fetchall())
+        except Exception as e:
+            rwlogger.write('debug', 'query data from database error: %s' % (str(e)))
+
+        # 返回码处理
+        rtcode_list = ['resultCode', 'balance', 'resultMsg', 'transactionSn', 'faultcode', 'faultstring']
+        re_patter_dict = {}
+        for _rtcode in rtcode_list:
+            re_patter_dict[_rtcode] = re.compile('<.*?%s>(.*?)<.*?%s>' % (_rtcode, _rtcode))
+
+        # 查询数据库并组装消息
+        msg_list = []
+        msg_dict = {}
+        for tmp_param in msg_param:
+            msg_dict = {}  # key: query, recharge
+            # # 组装充值消息
+            acct_code = tmp_param[2]
+            tnx_id = tmp_param[0]
+            acc_nbr = tmp_param[1]
+            bal_amount = randint(1000, 1000)
+            tmp_recharge_msg = construct_message(msg_template=recharge_msg, msg_param=(acct_code, bal_amount, tnx_id))
+            msg_dict['recharge'] = tmp_recharge_msg
+
+            # 组装余额查询消息
+            tmp_query_msg = construct_message(msg_template=query_bal_msg, msg_param=(acc_nbr, ))
+            msg_dict['query'] = tmp_query_msg
+
+            # 余额信息
+            msg_dict['balance'] = bal_amount
+            # 交易记录
+            msg_dict['txnid'] = tmp_param[0]
+            # 生成消息列表，msg_list格式[{'recharge':msg,'query':msg, 'balance':balance, 'txnid':txnid}, {'recharge':msg,'query':msg},'balance':balance, 'txnid':txnid...]
+            msg_list.append(msg_dict)
+
+        # deal with the result info
+        result_list = {}
+        for _msg in msg_list:
+            qry_result = {}
+            recharge_result = {}
+            if _msg['query'] is not None:
+                rev = self.ws.send(url, _msg['query'], content_type)
+                for _rtcode, re_obj in list(re_patter_dict.items()):
+                    _rst = re_obj.search(rev)
+                    if _rst is not None:
+                        qry_result[_rtcode] = _rst.group(1)
+                    else:
+                        qry_result[_rtcode] = '0'
+                rwlogger.write('debug', 'query balance info list is %s'% (qry_result))
+            if _msg['recharge'] is not None:
+                rev = self.ws.send(url, _msg['recharge'], content_type)
+                for _rtcode, re_obj in list(re_patter_dict.items()):
+                    _rst = re_obj.search(rev)
+                    if _rst is not None:
+                        recharge_result[_rtcode] = _rst.group(1)
+                    else:
+                        recharge_result[_rtcode] = '0'
+                rwlogger.write('debug', 'recharge info list is %s'% (qry_result))
+
+            recharge_amount = Decimal(_msg['balance'])
+            balance_pre = Decimal(qry_result['balance'])
+            balance_after = Decimal(recharge_result['balance'])
+            if recharge_amount + balance_pre == balance_after:
+                result_list[_msg['txnid']] = 'Y'
+                rwlogger.write('debug', 'transaction {0} is successful, balance info(pre|recharge|after):{1}|{2}|{3}'\
+                               .format(_msg['txnid'], str(balance_pre), str(recharge_amount), str(balance_after) ))
+            else:
+                result_list[_msg['txnid']] = 'N'
+                rwlogger.write('debug', 'transaction {0} is failed, balance info(pre|recharge|after):{1}|{2}|{3}'\
+                           .format(_msg['txnid'], str(balance_pre), str(recharge_amount), str(balance_after)))
+
+        # 计算成功和失败记录数
+        success_cnt = 0
+        fail_cnt = 0
+        for _rst in list(result_list.values()):
+            if _rst == 'Y':
+                success_cnt += 1
+            else:
+                fail_cnt += 1
+        self.assertEqual(fail_cnt, 0, '{0} records succeed, {1} records failed.'.format(*(success_cnt, fail_cnt)))
+
+    # def test_query_balance(self):
+    #     pass
+
+
+
+if __name__ == '__main__':
+    # unittest.main()
+    suite = unittest.TestSuite()
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestWSRecharge))
+    fp = file('E:\\Python\\devproject\\PyTest\\my_report.html', 'wb')
+    runner = HTMLTestRunner2.HTMLTestRunner(
+        stream=fp,
+        title='Data Migration Test Report',
+        description='Data Migration Test Report for neapl Ncell project'
+    )
+    runner.run(suite)

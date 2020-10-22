@@ -1,0 +1,13 @@
+syntax = "proto2";
+package dmcust;
+message GeoHomeZoneRecord
+{
+    required int64  subs_id            = 1;
+    required int64  seq                = 2;
+    optional int64  offer_id           = 3;
+    required int64  geo_home_zone_id   = 4;
+    required string status_cd          = 5;
+    required int64  state_date         = 6;
+    required int64  eff_date           = 7;
+    optional int64  exp_date           = 8;
+}

@@ -1,0 +1,21 @@
+syntax = "proto2";
+package dmcust;
+message CustRecord
+{
+    required int64  cust_id         = 1;
+    required int64  seq_nbr         = 2;
+    required int64  eff_date        = 3;
+    optional int64  exp_date        = 4;
+    optional int64  enter_date      = 5;
+    required string type_flag       = 6;
+    required string is_vip          = 7;
+    required string status_cd       = 8;
+    optional int64  birthday        = 9;
+    optional string cust_number     = 10;
+    optional string cust_name       = 11;
+    optional string cust_type       = 12;
+    optional string cust_area_grade = 13;
+    optional string cust_addr       = 14;
+    optional int64 tax_payer_id     = 15;
+    optional int64 party_cert_id    = 16;
+}

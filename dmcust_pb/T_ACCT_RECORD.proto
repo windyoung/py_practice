@@ -1,0 +1,16 @@
+syntax = "proto2";
+package dmcust;
+message AcctRecord
+{
+    required int64 acct_id               = 1;
+    required int64 seq_nbr               = 2;
+    required int64 billing_cycle_type_id = 3;
+    required int64 cust_id               = 4;
+    required string status_cd            = 5;
+    required int64 eff_date              = 6;
+    optional int64 exp_date              = 7;
+    optional string deliver_method       = 8;
+    optional int64 parent_acct_id        = 9;
+    optional string account_number       = 10;
+    optional string acct_category        = 11;
+}

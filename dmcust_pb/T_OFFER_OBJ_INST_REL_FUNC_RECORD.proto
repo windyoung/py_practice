@@ -1,0 +1,9 @@
+syntax = "proto2";
+package dmcust;
+message OfferObjInstRelFuncRecord
+{
+    required int64 offer_obj_inst_rel_func_id = 1;
+    required int64 offer_inst_id              = 2;
+    required int64 acc_prod_inst_id           = 3;
+    required int64 func_prod_inst_id          = 4;
+}

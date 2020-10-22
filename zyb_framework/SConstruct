@@ -1,0 +1,6 @@
+# coding: utf-8
+__author__ = 'li.rongqing@nj'
+__date__ = '$__DATE__$'
+
+#为了方便看脚本文件，引入同位语
+SConscript('SConstruct.py')

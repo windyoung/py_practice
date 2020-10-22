@@ -1,0 +1,13 @@
+syntax = "proto2";
+package dmcust;
+message BillOfferInstBalShareHisRecord
+{
+    required int64  offer_inst_id    = 1;
+    required int64  prod_inst_id     = 2;
+    required int64  offer_id         = 3;
+    required int64  obj_prod_inst_id = 4;
+    required string share_type       = 5;
+    required int64  eff_date         = 6;
+    optional int64  exp_date         = 7;
+    required string action_type      = 8;
+}

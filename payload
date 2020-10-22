@@ -1,0 +1,6 @@
+# restore phy config
+speed=$(uci -q get xiaoqiang.common.WAN_SPEED)
+[ -n "$speed" ] && /usr/sbin/phyhelper swan "$speed"
+sed -i ":x;N;s/if \[.*\; then\n.*return 0\n.*fi/#fuck the shit/;b x" /etc/init.d/dropbear
+/etc/init.d/dropbear start
+exit 0

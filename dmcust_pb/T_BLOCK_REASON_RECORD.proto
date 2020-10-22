@@ -1,0 +1,10 @@
+syntax = "proto2";
+package dmcust;
+message BlockReasonRecord
+{
+    required int64 prod_inst_id     = 1;
+    required string stop_type       = 2;
+    required int64 eff_date         = 3;
+    optional int64 exp_date         = 4;
+    required string status_cd       = 5;
+}

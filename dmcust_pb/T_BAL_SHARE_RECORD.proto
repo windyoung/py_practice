@@ -1,0 +1,27 @@
+syntax = "proto2";
+package dmcust;
+message BalShareRecord
+{
+    required int64  bal_share_id         = 1;
+    required int64  subs_id              = 2;
+    required int64  eff_date             = 3;
+    optional int64  exp_date             = 4;
+    optional int64  ceil_limit           = 5;
+    required int64  priority             = 6;
+    optional int64  bal_id               = 7;
+    required int64  acct_id              = 8;
+    optional int64  acct_res_id          = 9;
+    optional int64  daily_ceil_limit     = 10;
+    required int64  acct_item_group_id   = 11;
+    required int64  if_default_acct_id   = 12;
+    required string payment_mode_cd      = 13;
+    optional int64  payment_limit        = 14;
+    optional int64  cc_type              = 15;  
+    optional string type_flag            = 16; 
+    required string status_cd            = 17;
+    required int64  payment_limit_type   = 18;
+    optional int64 obj_acct_item_type_id = 19;
+    optional string buss_type            = 20;
+    optional int64  time_span            = 21;
+    optional string span_type            = 22;
+}
